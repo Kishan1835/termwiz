@@ -1,0 +1,1 @@
+G:\100xDevs-Pro\termwhiz\target\debug\termwhiz.exe: G:\100xDevs-Pro\termwhiz\src\explain.rs G:\100xDevs-Pro\termwhiz\src\main.rs G:\100xDevs-Pro\termwhiz\src\shell.rs G:\100xDevs-Pro\termwhiz\src\ui.rs
