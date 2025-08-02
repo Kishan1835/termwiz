@@ -4,9 +4,9 @@ mod ui;
 
 use dotenv::dotenv;
 use std::env;
-use tokio;
 use std::io::{self, Write};
 use std::process::Command;
+use tokio;
 
 #[tokio::main]
 async fn main() {
