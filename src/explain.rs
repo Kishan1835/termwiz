@@ -3,8 +3,8 @@ use reqwest::{
     Client,
 };
 use serde_json::json;
-
-pub async fn get_explanation(api_key: &str, command: &str) -> Result<String, reqwest::Error> {
+//phle request any tha ab string me aagya h 
+pub async fn get_explanation(api_key: &str, command: &str) -> Result<String, String> {
     // Prepare the request body
     let body = json!({
         "contents": [{
@@ -25,10 +25,33 @@ pub async fn get_explanation(api_key: &str, command: &str) -> Result<String, req
         .headers(headers)
         .json(&body)
         .send()
-        .await?;
+        .await
+        .map_err(|e| format!("Network error: {}", e))?;
 
-    // Parse the JSON response
-    let json: serde_json::Value = res.json().await?;
+    // Check if the response was successful
+    let status = res.status();
+    if !status.is_success() {
+        let error_text = res
+            .text()
+            .await
+            .unwrap_or_else(|_| "Unknown error".to_string());
+        return Err(format!("API error ({}): {}", status, error_text));
+    }
+
+    // Parse the JSON 
+    let json: serde_json::Value = res
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse JSON: {}", e))?;
+
+    // Check for API errors in the response
+    if let Some(error) = json.get("error") {
+        let error_msg = error
+            .get("message")
+            .and_then(|m| m.as_str())
+            .unwrap_or("API returned an error");
+        return Err(format!("API error: {}", error_msg));
+    }
 
     // Extract the explanation or fallback
     Ok(json["candidates"]

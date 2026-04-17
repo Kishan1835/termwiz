@@ -32,6 +32,12 @@ async fn main() {
         println!("🖥️ Command received: {}", command);
     }
 
+    // Validate command is not empty
+    if command.is_empty() {
+        eprintln!("❌ Error: Command cannot be empty.");
+        std::process::exit(1);
+    }
+
     // Step 3: Load API key
     let api_key = env::var("API_KEY").unwrap_or_else(|_| {
         eprintln!("❌ API_KEY not found. Please set it in your environment.");
